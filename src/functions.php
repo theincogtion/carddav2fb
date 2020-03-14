@@ -575,6 +575,11 @@ function getQuickdials(array $attributes, bool $alias = false)
  */
 function uploadBackgroundImage($attributes, array $config)
 {
+    if ($config['ftp-disable']) {
+        error_log('Ftp is not available or disabled. The upload of the background image is skipped.');
+        return;
+    }
+
     $quickdials = getQuickdials($attributes, $config['quickdial_alias'] ?? false);
     if (!count($quickdials)) {
         error_log('No quickdial numbers are set for a background image upload');
@@ -598,11 +603,13 @@ function uploadBackgroundImage($attributes, array $config)
  */
 function uploadAttributes($phonebook, $config)
 {
+    $fritzbox = $config['fritzbox'];
     $restore = new Restorer;
-    if (!count($specialAttributes = $restore->getPhonebookData($phonebook, $config))) {
+    if ($fritzbox['ftp-disable'] ||
+        !count($specialAttributes = $restore->getPhonebookData($phonebook, $config))) {
+        error_log('No special attributes are saved!');
         return [];
     }
-    $fritzbox= $config['fritzbox'];
 
     error_log('Save internal data from recent FRITZ!Box phonebook!');
     // Prepare FTP connection
@@ -638,6 +645,11 @@ function uploadAttributes($phonebook, $config)
  */
 function downloadAttributes($config)
 {
+    if ($config['ftp-disable']) {
+        error_log('Ftp is not available or disabled. Special attributes cannot be loaded!');
+        return [];
+    }
+
     // Prepare FTP connection
     $secure = @$config['plainFTP'] ? $config['plainFTP'] : false;
     $ftp_conn = getFtpConnection($config['url'], $config['user'], $config['password'], '/FRITZ/mediabox', $secure);

@@ -42,6 +42,7 @@ $config = [
             // 'verify' => false,   // uncomment to disable certificate check
         ],
         'plainFTP' => false,        // set true to use FTP instead of FTPS e.g. on Windows
+        'ftp-disable' => false,     // set true if your FRITZ!Box does not support ftp - e.g. 7412
     ],
 
     'filters' => [

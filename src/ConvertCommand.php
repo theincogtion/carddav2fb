@@ -32,6 +32,9 @@ class ConvertCommand extends Command
 
         $filename = $input->getArgument('source');
 
+        if ($this->config['fritzbox']['ftp-disable']) {
+            $input->setOption('image', false);
+        }
         // we want to check for image upload show stoppers as early as possible
         if ($input->getOption('image')) {
             $this->checkUploadImagePreconditions($this->config['fritzbox'], $this->config['phonebook']);

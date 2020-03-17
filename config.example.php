@@ -43,7 +43,7 @@ $config = [
         ],
         'ftp' => [
             'plain' => false,       // set true to use FTP instead of FTPS e.g. on Windows
-            'enabled' => true,      // set false if your FRITZ!Box does not support ftp - e.g. 7412
+            'disabled' => false,    // set false if your FRITZ!Box does not support ftp - e.g. 7412
         ],
     ],
 

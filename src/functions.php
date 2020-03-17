@@ -600,7 +600,7 @@ function uploadAttributes($phonebook, $config)
 {
     $fritzbox = $config['fritzbox'];
     $restore = new Restorer;
-    if ($fritzbox['ftp']['enabled'] == false ||
+    if ($fritzbox['ftp']['disabled'] ||
         !count($specialAttributes = $restore->getPhonebookData($phonebook, $config))) {
         error_log('No special attributes are saved!');
         return [];
@@ -640,7 +640,7 @@ function uploadAttributes($phonebook, $config)
  */
 function downloadAttributes($config)
 {
-    if ($config['ftp']['enabled'] == false) {
+    if ($config['ftp']['disabled']) {
         error_log('Ftp is not available or disabled. Special attributes cannot be loaded!');
         return [];
     }

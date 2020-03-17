@@ -30,7 +30,7 @@ class BackgroundCommand extends Command
         $savedAttributes = [];
         if (count($this->config['fritzbox']['fritzfons']) &&
             $this->config['phonebook']['id'] == 0 &&
-            $this->config['fritzbox']['ftp']['enabled']) {
+            !$this->config['fritzbox']['ftp']['disabled']) {
             error_log('Downloading FRITZ!Box phonebook');
             $xmlPhonebook = downloadPhonebook($this->config['fritzbox'], $this->config['phonebook']);
             if (count($savedAttributes = uploadAttributes($xmlPhonebook, $this->config))) {

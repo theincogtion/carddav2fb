@@ -32,7 +32,7 @@ class DownloadCommand extends Command
     {
         $this->loadConfig($input);
 
-        if ($this->config['fritzbox']['ftp']['enabled'] == false) {
+        if ($this->config['fritzbox']['ftp']['disabled']) {
             $input->setOption('image', false);
         }
         // we want to check for image upload show stoppers as early as possible

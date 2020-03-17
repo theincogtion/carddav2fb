@@ -29,7 +29,7 @@ class RunCommand extends Command
     {
         $this->loadConfig($input);
 
-        if ($this->config['fritzbox']['ftp']['enabled'] == false) {
+        if ($this->config['fritzbox']['ftp']['disabled']) {
             $input->setOption('image', false);
         }
         // we want to check for image upload show stoppers as early as possible
@@ -93,7 +93,7 @@ class RunCommand extends Command
         // uploading background image
         if (count($this->config['fritzbox']['fritzfons']) &&
             $this->config['phonebook']['id'] == 0 &&
-            $this->config['fritzbox']['ftp']['enabled']) {
+            !$this->config['fritzbox']['ftp']['disabled']) {
             uploadBackgroundImage($savedAttributes, $this->config['fritzbox']);
         }
 

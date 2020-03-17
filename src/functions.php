@@ -66,7 +66,7 @@ function getFtpConnection($url, $user, $password, $directory, $secure)
     $connectFunc = $secure ? 'ftp_connect' : 'ftp_ssl_connect';
 
     if ($connectFunc == 'ftp_ssl_connect' && !function_exists('ftp_ssl_connect')) {
-        throw new \Exception("PHP lacks support for 'ftp_ssl_connect', please use `plainFTP` to switch to unencrypted FTP");
+        throw new \Exception("PHP lacks support for 'ftp_ssl_connect', please use `ftp` => `plain` to switch to unencrypted FTP");
     }
     if (false === ($ftp_conn = $connectFunc($ftpserver))) {
         $message = sprintf("Could not connect to ftp server %s for upload", $ftpserver);
@@ -219,7 +219,7 @@ function uploadImages(array $vcards, array $config, array $phonebook, callable $
     $imgPath = rtrim($imgPath, '/') . '/';  // ensure one slash at end
 
     // Prepare FTP connection
-    $secure = @$config['plainFTP'] ? $config['plainFTP'] : false;
+    $secure = @$config['ftp']['plain'] ? $config['ftp']['plain'] : false;
     $ftp_conn = getFtpConnection($config['url'], $config['user'], $config['password'], $config['fonpix'], $secure);
 
     // Build up dictionary to look up UID => current FTP image file
@@ -575,11 +575,6 @@ function getQuickdials(array $attributes, bool $alias = false)
  */
 function uploadBackgroundImage($attributes, array $config)
 {
-    if ($config['ftp-disable']) {
-        error_log('Ftp is not available or disabled. The upload of the background image is skipped.');
-        return;
-    }
-
     $quickdials = getQuickdials($attributes, $config['quickdial_alias'] ?? false);
     if (!count($quickdials)) {
         error_log('No quickdial numbers are set for a background image upload');
@@ -605,7 +600,7 @@ function uploadAttributes($phonebook, $config)
 {
     $fritzbox = $config['fritzbox'];
     $restore = new Restorer;
-    if ($fritzbox['ftp-disable'] ||
+    if ($fritzbox['ftp']['enabled'] == false ||
         !count($specialAttributes = $restore->getPhonebookData($phonebook, $config))) {
         error_log('No special attributes are saved!');
         return [];
@@ -613,7 +608,7 @@ function uploadAttributes($phonebook, $config)
 
     error_log('Save internal data from recent FRITZ!Box phonebook!');
     // Prepare FTP connection
-    $secure = @$fritzbox['plainFTP'] ? $fritzbox['plainFTP'] : false;
+    $secure = @$fritzbox['ftp']['plain'] ? $fritzbox['ftp']['plain'] : false;
     $ftp_conn = getFtpConnection($fritzbox['url'], $fritzbox['user'], $fritzbox['password'], '/FRITZ/mediabox', $secure);
     // backup already stored data
     if (ftp_size($ftp_conn, 'Attributes.csv') != -1) {                  // file already exists
@@ -645,13 +640,13 @@ function uploadAttributes($phonebook, $config)
  */
 function downloadAttributes($config)
 {
-    if ($config['ftp-disable']) {
+    if ($config['ftp']['enabled'] == false) {
         error_log('Ftp is not available or disabled. Special attributes cannot be loaded!');
         return [];
     }
 
     // Prepare FTP connection
-    $secure = @$config['plainFTP'] ? $config['plainFTP'] : false;
+    $secure = @$config['ftp']['plain'] ? $config['ftp']['plain'] : false;
     $ftp_conn = getFtpConnection($config['url'], $config['user'], $config['password'], '/FRITZ/mediabox', $secure);
     if (ftp_size($ftp_conn, 'Attributes.csv') == -1) {
         return [];

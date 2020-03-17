@@ -28,7 +28,9 @@ class BackgroundCommand extends Command
 
         // uploading background image
         $savedAttributes = [];
-        if (count($this->config['fritzbox']['fritzfons']) && $this->config['phonebook']['id'] == 0) {
+        if (count($this->config['fritzbox']['fritzfons']) &&
+            $this->config['phonebook']['id'] == 0 &&
+            $this->config['fritzbox']['ftp']['enabled']) {
             error_log('Downloading FRITZ!Box phonebook');
             $xmlPhonebook = downloadPhonebook($this->config['fritzbox'], $this->config['phonebook']);
             if (count($savedAttributes = uploadAttributes($xmlPhonebook, $this->config))) {
